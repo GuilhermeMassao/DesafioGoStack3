@@ -13,8 +13,12 @@ import {
 export default function App() {
   async function handleLikeRepository(id) {
     api.post(`/repositories/${id}/like`).then(response => {
-      if (response.status == 204) {
-        setRepositories([...repositories].filter(x => x.id == id)[0].likes = response.likes);
+      if (response.status == 200) {
+        let data = response.data;
+        let updatedRepos = [...repositories];
+        let index = updatedRepos.findIndex(x => x.id == data.id);
+        updatedRepos[index] = data;
+        setRepositories(updatedRepos);
       }
 
     })
@@ -28,7 +32,7 @@ export default function App() {
       setRepositories(response.data);
     });
 
-  }, [repositories])
+  }, [])
 
 
   return (
@@ -43,8 +47,8 @@ export default function App() {
               <Text style={styles.repository}>{repository.title}</Text>
 
               <View style={styles.techsContainer}>
-                {repository.techs?.map(tech =>
-                  <Text style={styles.tech}>
+                {repository.techs?.map((tech, index, arr) =>
+                  <Text key={index} style={styles.tech}>
                     {tech}
                   </Text>
                 )}
